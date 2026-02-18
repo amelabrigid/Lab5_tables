@@ -1,0 +1,4 @@
+C:/Users/Андрей/proga/Lab5_tables/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/Андрей/proga/Lab5_tables/build/CMakeFiles/ZERO_CHECK.dir
+C:/Users/Андрей/proga/Lab5_tables/build/gtest/CMakeFiles/gtest.dir
+C:/Users/Андрей/proga/Lab5_tables/build/test/CMakeFiles/test.dir

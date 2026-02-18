@@ -4,9 +4,3 @@
 #include"polinom.h"
 #include"arithmetic.h"
 using namespace std;
-{
-	TEST(polinom, test1)
-	{
-
-	}
-}
