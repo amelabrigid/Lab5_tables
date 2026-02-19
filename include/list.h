@@ -18,6 +18,7 @@ protected:
 			pNext = node.pNext;
 		}
 	};
+	TNode* pCurrent;
 	TNode* pFirst;
 	TNode* pEnd;
 	size_t sz;
@@ -102,9 +103,23 @@ public:
 	{
 		return(sz == 0);
 	}
-	T& Front()noexcept
+	T& Front()
 	{
+		if (pFirst == nullptr)
+		{
+			throw 10;
+		}
+		pCurrent = pFirst;
 		return pFirst->value;
+	}
+	T& Next()
+	{
+		pCurrent = pCurrent->pNext;
+		if (pCurrent != nullptr)
+		{
+			return pCurrent->value;
+		}
+		throw 10;
 	}
 	void PushFront(const T& val)
 	{
@@ -237,5 +252,9 @@ public:
 	T& LastValue()
 	{
 		return pEnd->value;
+	}
+	T& FirstValue()
+	{
+		return pFirst->value;
 	}
 };
