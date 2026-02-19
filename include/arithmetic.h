@@ -9,6 +9,7 @@
 #include<map>
 #include"stack.h"
 #include"polinom.h"
+#include "basetable.h"
 using namespace std;
 
 enum LEXEM_TYPE {
@@ -24,16 +25,17 @@ struct Lexema
 	LEXEM_TYPE typeLex;
 
 };
+template <template<typename, typename> class tmap>
 class  TArithmeticExpression
 {
 	string infix;
 	vector<Lexema> postfix;
 	vector<Lexema> lexems;
-	map<string, int> priority =
+	tmap<string, int> priority =
 	{
 		{ "+",1}, {"-", 1}, {"*",2}, {"/", 2},{"(", 0}
 	};
-	map<char, Polinom> operands;
+	tmap<char, Polinom> operands;
 
 public:
 
@@ -170,7 +172,7 @@ public:
 							Lexema tmp = stack.pop();
 						}
 					}
-					//case(OPERATION):
+					//case(OPERATION): тут тоже итераторы, надо переделать
 					else
 					{
 						int j = 0;
@@ -221,21 +223,36 @@ public:
 		{
 			if (lexems[i].typeLex == VARIABLE)
 			{
-				map<char, Polinom>::iterator pos = values.find(lexems[i].stroka[0]);
-				Polinom val;// vmesto double polinom
-				if (pos == values.end())
+				Polinom val;
+				try
+				{
+					val = values.Find(lexems[i].stroka[0]);
+				}
+				catch (int error)
 				{
 					string tmp;
 					cout << "¬ведите значение" << endl << lexems[i].stroka << "=" << endl;
-					cin >> tmp; // vmesto double polinom
+					cin >> tmp;
 					Polinom x(tmp);
 					val = x;
 				}
-				else
-				{
-					val = pos->second;
-				}
-				operands.insert({ lexems[i].stroka[0], val });
+				operands.Insert( lexems[i].stroka[0], val );
+				
+				//map<char, Polinom>::iterator pos = values.find(lexems[i].stroka[0]);
+				//Polinom val;// vmesto double polinom
+				//if (pos == values.end())
+				//{
+				//	string tmp;
+				//	cout << "¬ведите значение" << endl << lexems[i].stroka << "=" << endl;
+				//	cin >> tmp; // vmesto double polinom
+				//	Polinom x(tmp);
+				//	val = x;
+				//}
+				//else
+				//{
+				//	val = pos->second;
+				//}
+				//operands.insert({ lexems[i].stroka[0], val });
 			}
 		}
 
@@ -278,13 +295,19 @@ public:
 			}
 			else if (postfix[i].typeLex == VARIABLE)
 			{
-				Polinom value;
-				auto it = operands.find(postfix[i].stroka[0]);
+				/*Polinom value;
+				auto it = operands.Find(postfix[i].stroka[0]);
 				if (it != operands.end())
 				{
 					 value = it->second;
+				}*/
+				try { 
+					stack.push(operands.Find(postfix[i].stroka[0])); 
 				}
-				stack.push(value);
+				catch (int error)
+				{
+
+				}
 			}
 		}
 		return stack.top();
