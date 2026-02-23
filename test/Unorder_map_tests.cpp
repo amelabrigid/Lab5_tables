@@ -51,5 +51,9 @@ TEST(Test7, Insert_REPEAT)
 {
 	Unordered_map<int, int> map1;
 	map1.Insert(100, 52);
-	EXPECT_THROW(map1.Insert(100, 25), int);
+	std::pair<int, int> para1(100, 52);
+	EXPECT_EQ(map1.First_value(), para1);
+	map1.Insert(100, 53);
+	std::pair<int, int> para2(100, 53);
+	EXPECT_EQ(para2, map1.First_value());
 }
