@@ -11,19 +11,18 @@ private:
 
 
 public:
-	virtual bool Insert(const tkey& key,const tval& val)override
+	virtual bool Insert(const tkey& key, const tval& val)override
 	{
 		try
 		{
-			Find(key);
+			tval& t = Find(key);
+			t = val;
 		}
 		catch (int error)
 		{
 			TSinglyList<std::pair<tkey, tval>>::PushBack(std::pair<tkey, tval>(key, val));
-			return true;
 		}
-		throw REPEAT;
-
+		return true;
 	}
 	virtual bool Delete(const tkey& key) override
 	{
