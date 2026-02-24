@@ -2,13 +2,14 @@
 #include <utility>
 #include"basetable.h"
 #include <vector>
+#include"Binary_Tree.h"
 const int NOT_FOUND = 15;
 const int REPEAT = 25;
 template <typename tkey, typename tval> 
-class AVL_TREE: public BaseTable<tkey, tval>
+class AVL_TREE: public BINARY_TREE<tkey, tval>
 {
 private:
-	struct Node
+	struct Node // public BaseTable<tkey, tval>,
 	{
 		std::pair<tkey, tval> data;
 		Node* parent;
