@@ -168,16 +168,6 @@ private:
 				Update_Height(balancer);
 				balancer = balancer->parent;
 			}
-
-			// Проверка корня
-			if (balancer == nullptr || balancer->parent == nullptr) 
-			{
-				if (root != balancer)
-				{
-					root = balancer;
-				}
-				//return;
-			}
 		}
 	}
 	void draw_tree(Node* node, std::vector<std::string>& lines, int level, int x, int y) const {
