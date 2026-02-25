@@ -4,6 +4,23 @@
 template <typename tkey, typename tval>
 class BINARY_TREE : public BaseTable<tkey, tval>
 {
+private:
+	void insert_sort(const std::vector<std::pair<tkey, tval>>& vec, int left_index, int right_index)
+	{
+		if (left_index > right_index)
+		{
+			return;
+		}
+		std::pair<tkey, tval> middle = vec[(left_index + right_index) / 2];
+		Insert(middle.first, middle.second);
+		insert_sort(vec, left_index, (left_index + right_index) / 2 - 1);
+		insert_sort(vec, (left_index + right_index) / 2 + 1, right_index);
+	}
+	bool compare_key(std::pair<tkey, tval> par1, std::pair<tkey, tval> par2)
+	{
+		return par1.first < par2.first;
+	}
+
 public:
 	struct Node
 	{
@@ -24,6 +41,11 @@ public:
 	BINARY_TREE()
 	{
 
+	}
+	BINARY_TREE(const std::vector<std::pair<tkey, tval>>& vec)
+	{
+		std::sort(vec.begin(), vec.end(), compare_key());
+		insert_sort(vec, vec.begin(), vec.size() - 1);
 	}
 	virtual bool Insert(const tkey&, const tval&) override
 	{
@@ -70,18 +92,17 @@ public:
 		}
 		return true;
 	}
-	virtual bool Delete(const tkey&) override // не доделал
+	virtual bool Delete(const tkey& key) override  // максимально зверский код, возможно с чем то перемудрил
 	{
 		Node* Current = root;
-		if (root == nullptr)
+		if (root == nullptr) /// проверка на пустое дерево
 		{
 			return false;
 		}
 		else
 		{
-			while (Current != nullptr && Current->data.first != key)
+			while (Current != nullptr && Current->data.first != key)  /// поиск места удаления
 			{
-				//Current = Next;
 				if (key > Current->data.first)
 				{
 					Current = Current->right;
@@ -98,46 +119,151 @@ public:
 		}
 		if (Current->left != nullptr && Current->right != nullptr) // 2 ребенка
 		{
+			Node* replacement = Current->right;
+			if (Current->parent != nullptr) // проверка на то что удаляемое не корень
+			{
+				if (Current->right->left == nullptr) // правый ребеное удаляемого сам является минимальным
+				{
+					replacement->parent = Current->parent;
+					Current->left->parent = replacement;
+					replacement->left = Current->left;
+					if (Current == Current->parent->left)
+					{
+						Current->parent->left = replacement;
+					}
+					else
+					{
+						Current->parent->right = replacement;
+					}
+				}
+				else
+				{
+					while (replacement->left != nullptr) // поиск минимального правого
+					{
+						replacement = replacement->left;
+					}
+					if (replacement->right != nullptr) // есть правый ребенок у замены, нужно его переприсоединить
+					{
+						replacement->right->parent = replacement->parent;
+						replacement->parent->left = replacement->right;
+					}
+					else
+					{
+						replacement->parent->left = nullptr;
+					}
+					Current->left->parent = replacement;
+					Current->right->parent = replacement;
+					replacement->left = Current->left;
+					replacement->right = Current->right;
+					replacement->parent = Current->parent;
+					if (Current == Current->parent->left)
+					{
+						Current->parent->left = replacement;
+					}
+					else
+					{
+						Current->parent->right = replacement;
+					}
+				}
+			}
+			else// Current == root // удаляемое является корнем
+			{
+				if (Current->right->left == nullptr) // правый ребенок минимальный
+				{
+					replacement->parent = Current->parent;
+					Current->left->parent = replacement;
+					replacement->left = Current->left;
+					root = replacement;
+				}
+				else
+				{
+					while (replacement->left != nullptr)
+					{
+						replacement = replacement->left;
+					}
+					if (replacement->right != nullptr) // есть правый ребенок у замены
+					{
+						replacement->right->parent = replacement->parent;
+						replacement->parent->left = replacement->right;
+					}
+					else
+					{
+						replacement->parent->left = nullptr;
+					}
+					Current->left->parent = replacement;
+					Current->right->parent = replacement;
+					replacement->left = Current->left;
+					replacement->right = Current->right;
+					replacement->parent = Current->parent;
+					root = replacement;
+				}
+			}
 
 		}
-		else 	if (Current->left == nullptr && Current->right != nullptr) // 1 ребенка 
+		else 	if (Current->left == nullptr && Current->right != nullptr) // 1 ребенок (правый)
 		{
-			if (Current == Current->parent->left)
+			if (Current->parent != nullptr)// проверка на корень
 			{
-				Current->parent->left = Current->right;
-				Current->right->parent = Current->parent;
+				if (Current == Current->parent->left)
+				{
+					Current->parent->left = Current->right;
+					Current->right->parent = Current->parent;
+				}
+				else
+				{
+					Current->parent->right = Current->right;
+					Current->right->parent = Current->parent;
+				}
 			}
 			else
 			{
-				Current->parent->right = Current->left;
-				Current->left->parent = Current->parent;
+				root = Current->right;
+				root->parent = nullptr;
 			}
 		}
-		else 	if (Current->left != nullptr && Current->right == nullptr) // 1 ребенка
+		else 	if (Current->left != nullptr && Current->right == nullptr) // 1 ребенок (левый)
 		{
-			if (Current == Current->parent->left)
+			if (Current->parent != nullptr) // проверка на корень
 			{
-				Current->parent->left = Current->left;
-				Current->left->parent = Current->parent;
+				if (Current == Current->parent->left)
+				{
+					Current->parent->left = Current->left;
+					Current->left->parent = Current->parent;
+				}
+				else
+				{
+					Current->parent->right = Current->left;
+					Current->left->parent = Current->parent;
+				}
 			}
 			else
 			{
-				Current->parent->right = Current->left;
-				Current->left->parent = Current->parent;
+				root = Current->left;
+				root->parent = nullptr;
 			}
+
 		}
-		else 	if (Current->left == nullptr && Current->right == nullptr) // 0 ребенка
+		else 	if (Current->left == nullptr && Current->right == nullptr) // 0 детей
 		{
-			if (Current == Current->parent->left)
-			{
-				Current->parent->left = nullptr;// 
+			if (Current != root)// проверка на корень
+			{	
+				if (Current == Current->parent->left)
+				{
+					Current->parent->left = nullptr;// 
+				}
+				else
+				{
+					Current->parent->right = nullptr;// запомнить ноду балансировки для авл
+				}
 			}
 			else
 			{
-				Current->parent->right = nullptr;// запомнить ноду балансировки
+				root = nullptr;
 			}
+
 		}
 		delete Current;
+		return true;
 	}
 	virtual tval& Find(const tkey&) override
 	{
@@ -161,40 +287,18 @@ public:
 		}
 		return Current->data.second;
 	}
+	void delete_node(Node* node)
+	{
+		if (node == nullptr)
+		{
+			return;
+		}
+		delete_node(node->left);
+		delete_node(node->right);
+		delete node;
+	}
 	~BINARY_TREE()
 	{
-		Node* Current;
-		if (root != nullptr)
-		{
-			if (Current->left != nullptr)
-			{
-				Current = root->left;
-			}
-			else
-			{
-				Current = root;
-			}
-			while (Current != root) // удаляем левое поддерево
-			{
-				while (Current->left != nullptr)
-				{
-					Current = Current->left;
-				}
-				Current = Current->parent;
-				delete Current->left;
-				Current->left = nullptr;
-				if (Current->right != nullptr)
-				{
-					Current = Current->right;
-				}
-				else
-				{
-					Current = Current->parent;
-					delete Current->left;
-					Current->left = nullptr;
-
-				}
-			}
-		}
+		delete_node(root);
 	}
 };
