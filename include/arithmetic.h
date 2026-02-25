@@ -31,9 +31,9 @@ class  TArithmeticExpression
 	string infix;
 	vector<Lexema> postfix;
 	vector<Lexema> lexems;
-	tmap<string, int> priority =
+	map<string, int> priority =
 	{
-		{ "+",1}, {"-", 1}, {"*",2}, {"/", 2},{"(", 0}
+		{ "+",1}, {"-", 1}, {"*",2}, {"/", 2},{"(", 0}			//??????????
 	};
 	tmap<char, Polinom> operands;
 
@@ -172,7 +172,7 @@ public:
 							Lexema tmp = stack.pop();
 						}
 					}
-					//case(OPERATION): тут тоже итераторы, надо переделать
+					//case(OPERATION): тут тоже итераторы
 					else
 					{
 						int j = 0;
@@ -217,7 +217,7 @@ public:
 			postfix.push_back(tmp);
 		}
 	}
-	void Variable(map<char, Polinom>& values) // vmesto double polinom
+	void Variable(tmap<char, Polinom>& values) // vmesto double polinom
 	{
 		for (int i = 0; i < lexems.size(); i++)
 		{
@@ -306,7 +306,7 @@ public:
 				}
 				catch (int error)
 				{
-
+					//??
 				}
 			}
 		}
