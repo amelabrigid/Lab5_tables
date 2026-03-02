@@ -6,7 +6,7 @@
 const int NOT_FOUND = 15;
 const int REPEAT = 25;
 template <typename tkey, typename tval> 
-class AVL_TREE: public BINARY_TREE<tkey, tval>
+class AVL_TREE: private BINARY_TREE<tkey, tval>
 {
 private:
 	struct Node

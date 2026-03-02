@@ -99,23 +99,20 @@ public:
 		{
 			return false;
 		}
-		else
+		while (Current != nullptr && Current->data.first != key)  /// поиск места удаления
 		{
-			while (Current != nullptr && Current->data.first != key)  /// поиск места удаления
+			if (key > Current->data.first)
 			{
-				if (key > Current->data.first)
-				{
-					Current = Current->right;
-				}
-				else
-				{
-					Current = Current->left;
-				}
+				Current = Current->right;
 			}
-			if (Current == nullptr)
+			else
 			{
-				return false;
+				Current = Current->left;
 			}
+		}
+		if (Current == nullptr)
+		{
+			return false;
 		}
 		if (Current->left != nullptr && Current->right != nullptr) // 2 ребенка
 		{
@@ -170,7 +167,7 @@ public:
 			{
 				if (Current->right->left == nullptr) // правый ребенок минимальный
 				{
-					replacement->parent = Current->parent;
+					replacement->parent = nullptr;
 					Current->left->parent = replacement;
 					replacement->left = Current->left;
 					root = replacement;
@@ -194,7 +191,7 @@ public:
 					Current->right->parent = replacement;
 					replacement->left = Current->left;
 					replacement->right = Current->right;
-					replacement->parent = Current->parent;
+					replacement->parent = nullptr;
 					root = replacement;
 				}
 			}
