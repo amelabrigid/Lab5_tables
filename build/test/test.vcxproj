@@ -316,6 +316,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="C:\Users\Андрей\proga\Lab5_tables\test\test_main.cpp" />
     <ClCompile Include="C:\Users\Андрей\proga\Lab5_tables\test\test_polinom_arithmetic.cpp" />
     <ClCompile Include="C:\Users\Андрей\proga\Lab5_tables\test\test_ordered_map.cpp" />
+    <ClCompile Include="C:\Users\Андрей\proga\Lab5_tables\test\test_binary_tree.cpp" />
+    <ClCompile Include="C:\Users\Андрей\proga\Lab5_tables\test\Unorder_map_tests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="C:\Users\Андрей\proga\Lab5_tables\build\ZERO_CHECK.vcxproj">

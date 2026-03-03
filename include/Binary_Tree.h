@@ -1,6 +1,10 @@
 #pragma once
 #include <utility>
 #include"basetable.h"
+
+const int NOT_FOUND = 15;
+const int REPEAT = 25;
+
 template <typename tkey, typename tval>
 class BINARY_TREE : public BaseTable<tkey, tval>
 {
@@ -28,13 +32,34 @@ public:
 		Node* left;
 		Node* right;
 		std::pair<tkey, tval> data;
-		Node(tkey& key, tval& val)
+/*		Node() :
+			parent( nullptr ),
+			left(nullptr), 
+			right (nullptr) {}
+*/		
+		Node(const tkey& key, const tval& val)
 		{
 			data.first = key;
 			data.second = val;
 			parent = nullptr;
 			left = nullptr;
 			right = nullptr;
+		}
+		Node( tkey& key,  tval& val)
+		{
+			data.first = key;
+			data.second = val;
+			parent = nullptr;
+			left = nullptr;
+			right = nullptr;
+		}
+		Node& operator=(const Node& n)
+		{
+			parent = n.parent;
+			left = n.left;
+			right = n.right;
+			data = n.data;
+			return *this;
 		}
 	};
 	Node* root = nullptr;
@@ -47,7 +72,7 @@ public:
 		std::sort(vec.begin(), vec.end(), compare_key());
 		insert_sort(vec, vec.begin(), vec.size() - 1);
 	}
-	virtual bool Insert(const tkey&, const tval&) override
+	virtual bool Insert(const tkey& key, const tval& val) override
 	{
 		try
 		{
@@ -262,7 +287,7 @@ public:
 		delete Current;
 		return true;
 	}
-	virtual tval& Find(const tkey&) override
+	virtual tval& Find(const tkey& key) override
 	{
 		Node* Current;
 		Current = root;

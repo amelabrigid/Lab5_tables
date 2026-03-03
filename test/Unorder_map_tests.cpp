@@ -1,13 +1,13 @@
 #include "gtest.h"
 #include"Unordered_map.h"
-TEST(Test1, ADD)
+TEST(unordered_map, ADD)
 {
 	Unordered_map<int, int> map1;
 	map1.Insert(100, 52);
 	std::pair<int, int> para(100, 52);
 	EXPECT_EQ(para, map1.Last_value());
 }
-TEST(Test2, Delete)
+TEST(unordered_map, Delete)
 {
 	Unordered_map<int, int> map1;
 	map1.Insert(100, 52);
@@ -16,13 +16,13 @@ TEST(Test2, Delete)
 	std::pair<int, int> para(100, 52);
 	EXPECT_EQ(para, map1.Last_value());
 }
-TEST(Test3, NoDelete)
+TEST(unordered_map, NoDelete)
 {
 	Unordered_map<int, int> map1;
 	map1.Insert(100, 52);
 	EXPECT_EQ(map1.Delete(15),0);
 }
-TEST(Test4, Found)
+TEST(unordered_map, Found)
 {
 	Unordered_map<int, int> map1;
 	map1.Insert(100, 52);
@@ -30,7 +30,7 @@ TEST(Test4, Found)
 	map1.Insert(52, 13);
 	EXPECT_EQ(map1.Find(15), 25);
 }
-TEST(Test5, NoFound)
+TEST(unordered_map, NoFound)
 {
 	Unordered_map<int, int> map1;
 	map1.Insert(100, 52);
@@ -38,7 +38,7 @@ TEST(Test5, NoFound)
 	map1.Insert(52, 13);
 	EXPECT_THROW(map1.Find(32), int);
 }
-TEST(Test6, DeleteFirst)
+TEST(unordered_map, DeleteFirst)
 {
 	Unordered_map<int, int> map1;
 	map1.Insert(100, 52);
@@ -47,7 +47,7 @@ TEST(Test6, DeleteFirst)
 	std::pair<int, int> para(15, 25);
 	EXPECT_EQ(para, map1.First_value());
 }
-TEST(Test7, Insert_REPEAT)
+TEST(unordered_map, Insert_REPEAT)
 {
 	Unordered_map<int, int> map1;
 	map1.Insert(100, 52);
