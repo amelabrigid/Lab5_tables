@@ -24,19 +24,18 @@ private:
 	{
 		return par1.first < par2.first;
 	}
-
-public:
+protected: 
 	struct Node
 	{
 		Node* parent;
 		Node* left;
 		Node* right;
 		std::pair<tkey, tval> data;
-/*		Node() :
-			parent( nullptr ),
-			left(nullptr), 
-			right (nullptr) {}
-*/		
+		/*		Node() :
+					parent( nullptr ),
+					left(nullptr),
+					right (nullptr) {}
+		*/
 		Node(const tkey& key, const tval& val)
 		{
 			data.first = key;
@@ -45,7 +44,7 @@ public:
 			left = nullptr;
 			right = nullptr;
 		}
-		Node( tkey& key,  tval& val)
+		Node(tkey& key, tval& val)
 		{
 			data.first = key;
 			data.second = val;
@@ -63,6 +62,9 @@ public:
 		}
 	};
 	Node* root = nullptr;
+
+public:
+	
 	BINARY_TREE()
 	{
 
@@ -116,6 +118,9 @@ public:
 			}
 		}
 		return true;
+	}
+	Node* get_root() {
+		return root;
 	}
 	virtual bool Delete(const tkey& key) override  // максимально зверский код, возможно с чем то перемудрил
 	{
