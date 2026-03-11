@@ -1,15 +1,15 @@
 #pragma once
 #include <gtest.h>
 #include <basetable.h>
+#include "Binary_Tree.h"
 
-template <template<double, int> class table>
+template <typename T1, typename T2, template<typename, typename> class Table >
 class testtable : public ::testing::Test {
 protected:
-	table<double, int> a;
-	//BINARY_TREE<char, int>* pointer = &a;
+	Table<T1, T2> a;
 public:
 	testtable() {
-		a = table();
+		a = Table<T1, T2>();
 		a.Insert(5.0, 1);
 		a.Insert(3.0, 2);
 		a.Insert(7.0, 3);
@@ -22,8 +22,10 @@ public:
 		a.Insert(4.0, 10);
 		a.Insert(5.75, 11);
 	}
-	~testbinary() {};
+	~testtable() {};
 	void TestBody() override {};
 	void SetUp() override {};
 	void TearDown() override {};
 };
+
+class BynaryTest : public testtable<double, int, BINARY_TREE> {};

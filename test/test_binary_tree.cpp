@@ -68,7 +68,7 @@ TEST(binary_tree, can_insert2)
 //	//EXPECT_EQ(a.Find('A'), 1);
 //}
 
-TEST_F(testtable<BINARY_TREE>, can_delete_get_root)
+TEST_F(BynaryTest, can_delete_get_root)
 {
 	a.Delete(5.0);
 	EXPECT_EQ(a.get_root()->data.first, 5.5);
@@ -77,25 +77,25 @@ TEST_F(testtable<BINARY_TREE>, can_delete_get_root)
 	EXPECT_EQ(a.get_root()->right->left->left->data.first, 5.75);
 }
 
-TEST_F(testbinary, can_delete2)
+TEST_F(BynaryTest, can_delete2)
 {
 	a.Delete(6.0);
 	EXPECT_EQ(a.get_root()->right->left->data.first, 6.5);
 }
 
-TEST_F(testbinary, can_delete3)
+TEST_F(BynaryTest, can_delete3)
 {
 	a.Delete(7.0);
 	EXPECT_EQ(a.get_root()->right->data.first, 8.0);
 }
 
-TEST_F(testbinary, can_delete4)
+TEST_F(BynaryTest, can_delete4)
 {
 	a.Delete(7.0);
 	EXPECT_EQ(a.get_root()->right->data.first, 8.0);
 }
 
-TEST_F(testbinary, can_find)
+TEST_F(BynaryTest, can_find)
 {
 	EXPECT_EQ(a.Find(5.75), 11);
 	EXPECT_EQ(a.Find(1), 9);
