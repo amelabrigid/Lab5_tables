@@ -101,7 +101,7 @@ public:
 			return false;
 		}
 	}
-	tval& Find(const tkey& k) override {
+	tval& Find(const tkey& k) override { // линейный поиск
 		if (size) {
 			for (int i = 0; i < size; ++i)
 			{
