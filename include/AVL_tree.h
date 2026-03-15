@@ -3,10 +3,10 @@
 #include"basetable.h"
 #include <vector>
 #include"Binary_Tree.h"
-const int NOT_FOUND = 15;
-const int REPEAT = 25;
-template <typename tkey, typename tval> 
-class AVL_TREE: private BINARY_TREE<tkey, tval>
+//const int NOT_FOUND = 15;
+//const int REPEAT = 25;
+template <typename tkey, typename tval>
+class AVL_TREE : private BINARY_TREE<tkey, tval>
 {
 private:
 	struct Node
@@ -16,7 +16,7 @@ private:
 		Node* left;
 		Node* right;
 		int height;// соблюдение баланса -1 0 1 
-		Node(tkey& key, tval& val)
+		Node(const tkey& key, const tval& val)
 		{
 			data.first = key;
 			data.second = val;
@@ -39,21 +39,21 @@ private:
 		{
 			right_height = node->right->height + 1;
 		}
-		if (left_heigth > right_height)
+		if (left_height > right_height)
 		{
-			node->height =  left_height;
+			node->height = left_height;
 		}
 		else
 		{
 			node->height = right_height;
 		}
 	}
-	Node* RIGHT_TURN(node* problem) // изначально был левый, возникла путаница с пониманием и названием, реализован вроде верно
+	Node* RIGHT_TURN(Node* problem) // изначально был левый, возникла путаница с пониманием и названием, реализован вроде верно
 	{
 		Node* tmp3 = problem->right;
 		Node* tmp2 = problem->right->left;
-		Node* tmp = problem;				
-		if (problem == root)					
+		Node* tmp = problem;
+		if (problem == root)
 		{
 			tmp->right = tmp2;
 			if (tmp2 != nullptr)
@@ -62,6 +62,8 @@ private:
 			}
 			tmp3->parent = nullptr;
 			tmp3->left = tmp;
+			tmp->parent = tmp3;
+			root = tmp3;
 		}
 		else
 		{
@@ -82,16 +84,16 @@ private:
 			tmp->parent = tmp3;
 			tmp3->left = tmp;
 		}
-		tmp->height =Update_Height(tmp);
-		tmp3->height = Update_Height(tmp3);// tmp2 не меняет высоту
+		Update_Height(tmp);
+		Update_Height(tmp3);// tmp2 не меняет высоту
 		return tmp3;
 	}
-	Node* LEFT_TURN(node* problem) // изначально был правый, возникла путаница с пониманием и названием, реализован вроде верно
+	Node* LEFT_TURN(Node* problem) // изначально был правый, возникла путаница с пониманием и названием, реализован вроде верно
 	{
 		Node* tmp = problem;
 		Node* tmp2 = problem->left->right;
-		Node* tmp3 = problem->left;			
-		if (problem == root)					
+		Node* tmp3 = problem->left;
+		if (problem == root)
 		{
 			tmp3->right = tmp;
 			tmp->parent = tmp3;
@@ -101,13 +103,13 @@ private:
 				tmp2->parent = tmp;
 			}
 			tmp->left = tmp2;
+			root = tmp3;
 		}
 		else
 		{
 			tmp3->right = tmp;
-			tmp->parent = tmp3;
-			tmp3->parent = problem->parent;
-			if (tmp3 == problem->parent->left)
+			tmp3->parent = tmp->parent;
+			if (tmp == problem->parent->left)
 			{
 				problem->parent->left = tmp3;
 			}
@@ -115,25 +117,34 @@ private:
 			{
 				problem->parent->right = tmp3;
 			}
+			tmp->parent = tmp3;
+
 			if (tmp2 != nullptr)
 			{
 				tmp2->parent = tmp;
 			}
 			tmp->left = tmp2;
 		}
-		tmp->height = Update_Height(tmp);
-		tmp3->height = Update_Height(tmp3);
+		Update_Height(tmp);
+		Update_Height(tmp3);
 		return tmp3;
 	}
-	int get_balance(Node* node) 
+public:
+	int get_balance(const tkey& key)
+	{
+		Node* node = Find_Node(key);// проверить для каждого ключа в тесте баланс
+		return get_balance(node);
+	}
+private:
+	int get_balance(Node* node)
 	{
 		int left_h = -1;
-		if (node->left!=nullptr)
+		if (node->left != nullptr)
 		{
 			left_h = node->left->height;
 		}
 		int right_h = -1;
-		if (node->right!=nullptr) 
+		if (node->right != nullptr)
 		{
 			right_h = node->right->height;
 		}
@@ -142,63 +153,63 @@ private:
 	void MAD_BALANCE(Node* node)// 
 	{
 		Node* balancer = node;
-		while (balancer != nullptr) 
+		while (balancer != nullptr)
 		{
 			int balance = get_balance(balancer);
 
 			if (balance > 1) // левое тяжелее
-			{                   
-				if (get_balance(balancer->left) < 0) 
+			{
+				if (get_balance(balancer->left) < 0)
 				{										// LR
 					balancer->left = RIGHT_TURN(balancer->left);
 				}
-				balancer = LEFT_TURN(balancer);    // LL 
+				balancer = LEFT_TURN(balancer); 	// LL 
 				balancer = balancer->parent;
 			}
 			else if (balance < -1) // правое тяжелее
-			{              
-				if (get_balance(balancer->right) > 0) 
+			{
+				if (get_balance(balancer->right) > 0)
 				{										// RL
 					balancer->right = LEFT_TURN(balancer->right);
 				}
 				balancer = RIGHT_TURN(balancer);   // RR 
 				balancer = balancer->parent;
 			}
-			else 
+			else
 			{                                // Нормальный баланс 0 -1 1
 				Update_Height(balancer);
 				balancer = balancer->parent;
 			}
-
-			// Проверка корня
-			if (balancer == nullptr || balancer->parent == nullptr) 
-			{
-				if (root != balancer)
-				{
-					root = balancer;
-				}
-			}
+			//balancer = balancer->parent;
+			//if (balancer == nullptr || balancer->parent == nullptr)
+			//{
+			//	if (root != balancer)
+			//	{
+			//		root = balancer;
+			//	}
+			//}
 		}
 	}
-	void draw_tree(Node* node, std::vector<std::string>& lines, int level, int x, int y) const {
+	void draw_tree(Node* node) const {
 		if (node == nullptr) return;
-
-		lines[y] += "  ";
-		for (int i = 0; i < x - 1; ++i) lines[y] += " ";
-		lines[y] += "O(" + std::to_string(node->data.first) + ")";
-
+		std::cout << "node = " << node->data.first;
 		if (node->right) {
-			lines[y + 1] += "  ";
-			for (int i = 0; i < x - 1; ++i) lines[y + 1] += " ";
-			lines[y + 1][x * 3 - 1] = '/';  // /
-			draw_tree(node->right, lines, level + 1, x * 2, y + 2);
+			std::cout << ", node.right =" << node->right->data.first;
 		}
 
 		if (node->left) {
-			lines[y + 1] += "  ";
-			for (int i = 0; i < x - 1; ++i) lines[y + 1] += " ";
-			lines[y + 1][x * 3 + 1] = '\\';  
-			 draw_tree(node->left, lines, level+1, x/2, y+2);
+			std::cout << ", node.left =" << node->left->data.first;
+
+		}
+		std::cout <<std::endl;
+		if (node->right) {
+
+			draw_tree(node->right);
+		}
+
+		if (node->left) {
+
+			draw_tree(node->left);
 		}
 	}
 	int get_height(Node* node) const {
@@ -225,11 +236,12 @@ public:
 
 	}
 
-	AVL_TREE(const std::vector<std::pair<tkey,tval>>&vec)
-	:BINARY_TREE<tkey, tval>(vec);
+	AVL_TREE(const std::vector<std::pair<tkey, tval>>& vec)
+		:BINARY_TREE<tkey, tval>(vec)
 	{
 
-	}
+	};
+
 	virtual bool Insert(const tkey& key, const tval& val) override
 	{
 		try
@@ -241,6 +253,7 @@ public:
 		{
 			Node* Current = root;
 			Node* Next = root;// пустое дерево
+			Node* NEW_node = nullptr;
 			if (root == nullptr)
 			{
 				root = new Node(key, val);
@@ -260,27 +273,27 @@ public:
 						Next = Next->left;
 					}
 				}
-				Node* NEW = new Node(key, val);
+				NEW_node = new Node(key, val);
 				if (Current->data.first < key)
 				{
-					Current->right = NEW;
-					NEW->parent = Current;
+					Current->right = NEW_node;
+					NEW_node->parent = Current;
 				}
 				else
 				{
-					Current->left = NEW;
-					NEW->parent = Current;
+					Current->left = NEW_node;
+					NEW_node->parent = Current;
 				}
 			}
 			//bool res = BINARY_TREE<tkey, tval>::Insert(key);
-			MAD_BALANCE(NEW);
+			MAD_BALANCE(NEW_node);
 		}
 		return true;
 	}
 	virtual bool Delete(const tkey& key)override // 2 детей Находим минимальный узел в правом поддереве
 	{
 		//bool res = BINARY_TREE<tkey, tval>::Delete(key);
-		Node* balance_node;
+		Node* balance_node = nullptr;
 		Node* Current = root;
 		if (root == nullptr) /// проверка на пустое дерево
 		{
@@ -457,6 +470,28 @@ public:
 		MAD_BALANCE(balance_node);
 		return true;
 	}
+	Node* Find_Node(const tkey& key)
+	{
+		Node* Current;
+		Current = root;
+		while (Current != nullptr && Current->data.first != key)
+		{
+			if (Current->data.first < key)
+			{
+				Current = Current->right;
+
+			}
+			else
+			{
+				Current = Current->left;
+			}
+		}
+		if (Current == nullptr)
+		{
+			throw NOT_FOUND;
+		}
+		return Current;
+	}
 	virtual tval& Find(const tkey& key)override
 	{
 		return BINARY_TREE<tkey, tval>::Find(key);
@@ -467,15 +502,15 @@ public:
 			return;
 		}
 
-		int height = get_height(root);
-		int width = 1 << height; 
-		std::vector<std::string> lines(height * 3, std::string(width * 6, ' '));
+		//int height = get_height(root);
+		//int width = 1 << height;
+		//std::vector<std::string> lines(height * 3, std::string(width * 6, ' '));
 
-		draw_tree(root, lines, 0, width / 2, height);
-
-		for (const auto& line : lines) {
-			std::cout << line.substr(0, width * 4) << std::endl;
-		}
+		draw_tree(root);
+		std::cout << std::endl << "------" << std::endl;
+		//for (const auto& line : lines) {
+		//	std::cout << line.substr(0, width * 4) << std::endl;
+		//}
 	}
 	~AVL_TREE()// пробежаться по дереву и удалить все ноды, начиная с концов и заканчивая корнем
 	{
