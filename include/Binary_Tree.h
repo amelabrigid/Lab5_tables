@@ -292,7 +292,7 @@ public:
 		delete Current;
 		return true;
 	}
-	virtual tval& Find(const tkey& key) override
+	Node* Find_Node(const tkey& key)
 	{
 		Node* Current;
 		Current = root;
@@ -312,7 +312,12 @@ public:
 		{
 			throw NOT_FOUND;
 		}
-		return Current->data.second;
+		return Current;
+	}
+	virtual tval& Find(const tkey& key) override
+	{
+
+		return Find_Node(key)->data.second;
 	}
 	void delete_node(Node* node)
 	{
