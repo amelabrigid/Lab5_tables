@@ -24,7 +24,7 @@ private:
 		{
 			data.first = key;
 			data.second = val;
-			parent = nullptr;
+			parent = nil;
 			left = nil;
 			right = nil;
 			color = 0;
@@ -44,7 +44,7 @@ private:
 		{
 			data.first = key;
 			data.second = val;
-			parent = nullptr;
+			parent = nil;
 			left = nil;
 			right = nil;
 			color = 0;
@@ -146,12 +146,12 @@ private:
 				y = x->parent->parent->left;   // у - дядя х
 				if (y->color) // если дядя чёрный
 				{
-					if (x == x->parent->left)   // если х - правый потомок, тогда передвигаем его налево и идём дальше 
+					if (x == x->parent->left)   // если х - левый потомок, тогда передвигаем его направо и идём дальше 
 					{
 						right_turn(x->parent);
 						x = x->right;
 					}
-					// если х = левый потомок, тогда правым поворотом поднимаем его наверх
+					// если х - правый потомок, тогда левым поворотом поднимаем его наверх
 
 					left_turn(x->parent->parent);
 					x->parent.color = 1;
@@ -191,7 +191,7 @@ public:
 		}
 		return cur->data.second;
 	}
-	bool Insert(const tkey& key, const tval& val) override
+	bool Insert(const tkey& key, const tval& val) override // можно переиспользовать из binary tree
 	{
 		try
 		{
@@ -227,5 +227,22 @@ public:
 			return true;
 		}
 		//случай, когда нашли такой же ключ и нужно заменить значение
+		Node* cur = root;
+		while (cur->data.first != key)
+		{
+			if (key < cur->data.first)
+			{
+				cur = cur->left;
+			}
+			else {
+				cur = cur->right;
+			}
+		}
+		cur->data.second = val;
+		return false;
+	}
+	bool Delete(const tkey& key)
+	{
+
 	}
 };

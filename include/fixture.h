@@ -3,6 +3,7 @@
 #include <basetable.h>
 #include "Binary_Tree.h"
 #include "AVL_tree.h"
+#include "RED_BLACK_TREE.h"
 
 template <typename T1, typename T2, template<typename, typename> class Table >
 class testtable : public ::testing::Test {
@@ -31,4 +32,4 @@ public:
 
 class BynaryTest : public testtable<double, int, BINARY_TREE> {};
 class AVLTest : public testtable<double, int, AVL_TREE> {};
-//class RedBlackTest : public testtable<double, int, RED_BLACK_TREE> {};
+class RedBlackTest : public testtable<double, int, RED_BLACK_TREE> {};

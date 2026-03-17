@@ -16,6 +16,9 @@
     <ClCompile Include="C:\Users\Андрей\proga\Lab5_tables\test\Unorder_map_tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\Users\Андрей\proga\Lab5_tables\test\test_red_black_tree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="C:\Users\Андрей\proga\Lab5_tables\test\CMakeLists.txt" />
