@@ -168,6 +168,23 @@ public:
 	{
 		nil = new RBNode(1);
 	}
+	RBNode* find_place(const tkey& key)
+	{
+		RBNode* cur = root;
+		RBNode* pred = root;
+		while ((cur != nil) && (key != cur->data.first))
+		{
+			pred = cur;
+			if (cur->data.first > key)
+			{
+				cur = cur->left;
+			}
+			else {
+				cur = cur->right;
+			}
+		}
+		return pred;
+	}
 	tval& Find(const tkey& key) {
 		RBNode* cur = root;
 		while ((cur != nil) && (key != cur->data.first))
@@ -225,18 +242,15 @@ public:
 				return true;
 			}
 			//случай, когда нашли такой же ключ и нужно заменить значение
-			RBNode* cur = root;
-			while (cur->data.first != key)
+			RBNode* cur = find_place(key);
+			if (key > cur->data.first)
 			{
-				if (key < cur->data.first)
-				{
-					cur = cur->left;
-				}
-				else {
-					cur = cur->right;
-				}
+				cur->right->data.second = val;
 			}
-			cur->data.second = val;
+			else
+			{
+				cur->left->data.second = val;
+			}
 			return false;
 		}
 		else {
@@ -244,8 +258,24 @@ public:
 			root->color = 1;
 		}
 	}
+	RBNode* Tree_Successor(RBNode* n)
+	{
+		RBNode* n2 = n->right;
+		while (n2->left != nil)
+		{
+			n2 = n2->left;
+		}
+		return n2;
+	}
 	bool Delete(const tkey& key)
 	{
-
+		RBNode* pz = find_place(key);
+		RBNode* y = pz;
+		RBNode* z = pz;
+		if (key > pz->data.first) z = pz->right;
+		else z = pz->left;
+		if ((z->left == nil) || (z->right == nil)) y = z;
+		else y = Tree_Successor(z);
+		return true;
 	}
 };
