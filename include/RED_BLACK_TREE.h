@@ -6,7 +6,7 @@ template <typename tkey, typename tval>
 class RED_BLACK_TREE : public BINARY_TREE<tkey, tval>
 {
 private:
-	struct RBNode //: public BINARY_TREE::Node
+	struct RBNode
 	{
 		RBNode* parent;
 		RBNode* left;
@@ -14,18 +14,13 @@ private:
 		bool color; // 0 - red, 1 - black
 		int bh; // black height
 		std::pair<tkey, tval> data;
-		/*		Node() :
-					parent( nullptr ),
-					left(nullptr),
-					right (nullptr) {}
-		*/
-		RBNode(const tkey& key, const tval& val, RBNode* n)
+		RBNode(const tkey& key, const tval& val, RBNode* n) 
 		{
 			data.first = key;
 			data.second = val;
 			parent = n;
-			left = n;
-			right = n;
+			left = nullptr;
+			right = nullptr;
 			color = 0;
 			bh = 1;
 		}
@@ -34,18 +29,18 @@ private:
 		//	data.first = tkey{};
 		//	data.second = tval{};
 		//	parent = nullptr;
-		//	left = nil;
-		//	right = nil;
+			left = nullptr;
+			right = nullptr;
 			color = 1;
 			bh = 0;
 		}
-		RBNode(tkey& key, tval& val, RBNode* n)
+		RBNode(tkey& key, tval& val, RBNode* n) 
 		{
 			data.first = key;
 			data.second = val;
 			parent = n;
-			left = n;
-			right = n;
+			left = nullptr;
+			right = nullptr;
 			color = 0;
 			bh = 1;
 		}
@@ -60,6 +55,7 @@ private:
 	};
 	RBNode* nil = nullptr;
 	RBNode* root = nullptr;
+	
 	void right_turn(RBNode* x)
 	{
 		int r = 1;
@@ -176,13 +172,12 @@ public:
 		RBNode* cur = root;
 		while ((cur != nil) && (key != cur->data.first))
 		{
-			if (cur->data.first < key)
-			{
-				cur = cur->right;
-			}
-			else
+			if (cur->data.first > key)
 			{
 				cur = cur->left;
+			}
+			else {
+				cur = cur->right;
 			}
 		}
 		if (cur == nil) {
@@ -204,6 +199,8 @@ public:
 				RBNode* cur = root;
 				RBNode* pred = root;
 				RBNode* ins = new RBNode(key, val, nil);
+				ins->left = nil;
+				ins->right = nil;
 				while (cur != nil)
 				{
 					pred = cur;
