@@ -162,7 +162,12 @@ private:
 				}
 			}
 		}
-	};
+		
+	}
+	void delete_fixup(RBnode* x)
+	{
+
+	}
 public:
 	RED_BLACK_TREE()
 	{
@@ -269,13 +274,38 @@ public:
 	}
 	bool Delete(const tkey& key)
 	{
+				
+		if (root == nullptr) return false;			// проверка на пустое дерево
+		try {
+			tval t = Find(key);							// проверка на наличие ключа
+		}
+		catch (int error)
+		{
+			return false;
+		}
 		RBNode* pz = find_place(key);
 		RBNode* y = pz;
 		RBNode* z = pz;
-		if (key > pz->data.first) z = pz->right;
+		RBNode* x = pz;
+		if (key > pz->data.first) z = pz->right;		//находим z (особенности find_place)
 		else z = pz->left;
-		if ((z->left == nil) || (z->right == nil)) y = z;
+		
+		if ((z->left == nil) || (z->right == nil)) y = z;	//определяем, оба ли потомка имеет z
 		else y = Tree_Successor(z);
+		
+		if (y->left != nil) x = y->left;		//всегда выполняется, если потомка было два, именно х мы 
+												//вставляем вместо z
+		else x = y->right;
+		
+		x->parent = y->parent;		//присоединили х к родителю у
+		
+		if (y->parent == nil) root = x;						// случай, если удаляем корень
+		else if (y == y->parent->left) y->parent->left = x;
+			else y->parent->right = x;
+		
+		if (y != z) z->data = y->data;		//
+		if (y->color) delete_fixup(x);
+		delete y;
 		return true;
 	}
 };
