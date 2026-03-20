@@ -6,9 +6,14 @@
 //const int NOT_FOUND = 15;
 //const int REPEAT = 25;
 template <typename tkey, typename tval>
-class AVL_TREE : private BINARY_TREE<tkey, tval>
+class AVL_TREE : public BINARY_TREE<tkey, tval>
 {
 private:
+	//struct Node : public BINARY_TREE<tkey, tval>::Node {  // Наследуем Node!
+	//	int height;
+	//	Node(const tkey& key, const tval& val)
+	//		: BINARY_TREE<tkey, tval>::Node(key, val), height(0) {}
+	//};
 	struct Node
 	{
 		std::pair<tkey, tval> data;
@@ -26,7 +31,9 @@ private:
 			height = 0;// считаем каждое звено изначально листом
 		}
 	};
+protected:
 	Node* root = nullptr; // высота nullptr = -1 высота листа =0, считаем по ребрам
+	private:
 	void Update_Height(Node* node)
 	{
 		int left_height = 0;
@@ -494,7 +501,8 @@ public:
 	}
 	virtual tval& Find(const tkey& key)override
 	{
-		return BINARY_TREE<tkey, tval>::Find(key);
+		return Find_Node(key)->data.second;
+		//return BINARY_TREE<tkey, tval>::Find(key);
 	}
 	void draw() const {
 		if (root == nullptr) {
