@@ -19,8 +19,8 @@ private:
 			data.first = key;
 			data.second = val;
 			parent = n;
-			left = nullptr;
-			right = nullptr;
+			left = n;
+			right = n;
 			color = 0;
 			bh = 1;
 		}
@@ -39,8 +39,8 @@ private:
 			data.first = key;
 			data.second = val;
 			parent = n;
-			left = nullptr;
-			right = nullptr;
+			left = n;
+			right = n;
 			color = 0;
 			bh = 1;
 		}
@@ -164,10 +164,10 @@ private:
 		}
 		
 	}
-	void delete_fixup(RBnode* x)
+	/*void delete_fixup(RBnode* x)
 	{
 
-	}
+	}*/
 public:
 	RED_BLACK_TREE()
 	{
@@ -191,21 +191,26 @@ public:
 		return pred;
 	}
 	tval& Find(const tkey& key) {
-		RBNode* cur = root;
-		while ((cur != nil) && (key != cur->data.first))
-		{
-			if (cur->data.first > key)
+		if (root) {
+			RBNode* cur = root;
+			while ((cur != nil) && (key != cur->data.first))
 			{
-				cur = cur->left;
+				if (cur->data.first > key)
+				{
+					cur = cur->left;
+				}
+				else {
+					cur = cur->right;
+				}
 			}
-			else {
-				cur = cur->right;
+			if (cur == nil) {
+				throw 15;
 			}
+			return cur->data.second;
 		}
-		if (cur == nil) {
+		else {
 			throw 15;
 		}
-		return cur->data.second;
 	}
 	bool Insert(const tkey& key, const tval& val) override // можно переиспользовать из binary tree
 	{
@@ -272,6 +277,10 @@ public:
 		}
 		return n2;
 	}
+	RBNode* get_root()
+	{
+		return root;
+	}
 	bool Delete(const tkey& key)
 	{
 				
@@ -304,7 +313,7 @@ public:
 			else y->parent->right = x;
 		
 		if (y != z) z->data = y->data;		//
-		if (y->color) delete_fixup(x);
+		//if (y->color) delete_fixup(x);
 		delete y;
 		return true;
 	}
