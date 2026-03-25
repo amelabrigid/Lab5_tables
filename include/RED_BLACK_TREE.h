@@ -5,7 +5,7 @@
 template <typename tkey, typename tval>
 class RED_BLACK_TREE : public BINARY_TREE<tkey, tval>
 {
-private:
+public:
 	struct RBNode
 	{
 		RBNode* parent;
@@ -28,7 +28,7 @@ private:
 		{
 		//	data.first = tkey{};
 		//	data.second = tval{};
-		//	parent = nullptr;
+			parent = nullptr;
 			left = nullptr;
 			right = nullptr;
 			color = 1;
@@ -56,6 +56,141 @@ private:
 	RBNode* nil = nullptr;
 	RBNode* root = nullptr;
 	
+	
+	void insert_fixup(RBNode* x) {
+		
+		while (!(x->parent->color))
+		{
+				if (x->parent == x->parent->parent->left)   // если родитель х - левый потомок своего родителя
+				{
+					RBNode* y = x->parent->parent->right;   // у - дядя х
+					if (y->color) // если дядя чёрный
+					{
+						if (x == x->parent->right)   // если х - правый потомок, тогда передвигаем его налево и идём дальше 
+						{
+							left_turn(x->parent);
+							x = x->left;
+						}
+						// если х = левый потомок, тогда правым поворотом поднимаем его наверх
+
+						right_turn(x->parent->parent);
+						x->parent->color = 1;
+						x->parent->right->color = 0;
+
+					}
+					else  //  если дядя красный
+					{
+						x->parent->color = 1;
+						y->color = 1;
+						x->parent->parent->color = 0;
+						x = x->parent->parent;
+					}
+				}
+				else //в точности то же, но с заменой левого на правое
+				{
+					RBNode* y = x->parent->parent->left;   // у - дядя х
+					if (y->color) // если дядя чёрный
+					{
+						if (x == x->parent->left)   // если х - левый потомок, тогда передвигаем его направо и идём дальше 
+						{
+							right_turn(x->parent);
+							x = x->right;
+						}
+						// если х - правый потомок, тогда левым поворотом поднимаем его наверх
+
+						left_turn(x->parent->parent);
+						x->parent->color = 1;
+						x->parent->left->color = 0;
+
+					}
+					else  //  если дядя красный
+					{
+						x->parent->color = 1;
+						y->color = 1;
+						x->parent->parent->color = 0;
+						x = x->parent->parent;
+					}
+				}
+				if (x == root)
+				{
+					x->color = 1;
+					return;
+				}
+		}
+		
+	}
+	void delete_fixup(RBNode* x)
+	{
+		RBNode* w = nullptr;
+		while ((x != root) && (x->color))
+		{
+			if (x == x->parent->left)
+			{
+				w = x->parent->right;
+				if (!(w->color))
+				{
+					w->color = 1;
+					x->parent->color = 0;
+					left_turn(x->parent);
+					w = x->parent->right;
+				}
+				if ((w->left->color) && (w->right->color))
+				{
+					w->color = 0;
+					x = x->parent;
+				}
+				else {
+					if (w->right->color)
+					{
+						w->left->color = 1;
+						w->color = 0;
+						right_turn(w);
+						w = x->parent->right;
+					}
+				}
+				w->color = x->parent->color;
+				x->parent->color = 1;
+				w->right->color = 1;
+				left_turn(x->parent);
+				x = root;
+			}
+			else
+			{
+				w = x->parent->left;
+				if (!(w->color))
+				{
+					w->color = 1;
+					x->parent->color = 0;
+					right_turn(x->parent);
+					w = x->parent->left;
+				}
+				if ((w->right->color) && (w->left->color))
+				{
+					w->color = 0;
+					x = x->parent;
+				}
+				else {
+					if (w->left->color)
+					{
+						w->right->color = 1;
+						w->color = 0;
+						left_turn(w);
+						w = x->parent->left;
+					}
+				}
+				w->color = x->parent->color;
+				x->parent->color = 1;
+				w->left->color = 1;
+				right_turn(x->parent);
+				x = root;
+			}
+		}
+		x->color = 1;
+	}
+	RED_BLACK_TREE()
+	{
+		nil = new RBNode(1);
+	}
 	void right_turn(RBNode* x)
 	{
 		int r = 1;
@@ -63,7 +198,7 @@ private:
 
 		RBNode* y = x->left;
 		RBNode* z = y->right;
-		y->parent = x->parent;			
+		y->parent = x->parent;
 		x->parent = y;
 		y->right = x;
 		z->parent = x;
@@ -108,78 +243,13 @@ private:
 			root = y;
 		}
 	}
-	void insert_fixup(RBNode* x) {
-		while (!(x->parent->color))
-		{
-			if (x->parent == x->parent->parent->left)   // если родитель х - левый потомок своего родителя
-			{
-				RBNode* y = x->parent->parent->right;   // у - дядя х
-				if (y->color) // если дядя чёрный
-				{ 
-					if (x == x->parent->right)   // если х - правый потомок, тогда передвигаем его налево и идём дальше 
-					{
-						left_turn(x->parent);
-						x = x->left;
-					}
-					 // если х = левый потомок, тогда правым поворотом поднимаем его наверх
-					
-					right_turn(x->parent->parent);
-					x->parent->color = 1;
-					x->parent->right->color = 0;
-					
-				}
-				else  //  если дядя красный
-				{
-					x->parent->color = 1;
-					y->color = 1;
-					x->parent->parent->color = 0;
-					x = x->parent->parent;
-				}
-			}
-			else //в точности то же, но с заменой левого на правое
-			{
-				RBNode* y = x->parent->parent->left;   // у - дядя х
-				if (y->color) // если дядя чёрный
-				{
-					if (x == x->parent->left)   // если х - левый потомок, тогда передвигаем его направо и идём дальше 
-					{
-						right_turn(x->parent);
-						x = x->right;
-					}
-					// если х - правый потомок, тогда левым поворотом поднимаем его наверх
-
-					left_turn(x->parent->parent);
-					x->parent->color = 1;
-					x->parent->left->color = 0;
-
-				}
-				else  //  если дядя красный
-				{
-					x->parent->color = 1;
-					y->color = 1;
-					x->parent->parent->color = 0;
-					x = x->parent->parent;
-				}
-			}
-		}
-		
-	}
-	/*void delete_fixup(RBnode* x)
-	{
-
-	}*/
-public:
-	RED_BLACK_TREE()
-	{
-		nil = new RBNode(1);
-	}
 	RBNode* find_place(const tkey& key)
 	{
 		RBNode* cur = root;
-		RBNode* pred = root;
-		while ((cur != nil) && (key != cur->data.first))
+		//RBNode* pred = root;
+		while (key != cur->data.first)
 		{
-			pred = cur;
+			//pred = cur;
 			if (cur->data.first > key)
 			{
 				cur = cur->left;
@@ -188,7 +258,7 @@ public:
 				cur = cur->right;
 			}
 		}
-		return pred;
+		return cur;
 	}
 	tval& Find(const tkey& key) {
 		if (root) {
@@ -248,19 +318,12 @@ public:
 				else {
 					pred->right = ins;
 				}
-				insert_fixup(ins);
+				insert_fixup(ins); // ПРОБЛЕМА ЗДЕСЬ
 				return true;
 			}
 			//случай, когда нашли такой же ключ и нужно заменить значение
 			RBNode* cur = find_place(key);
-			if (key > cur->data.first)
-			{
-				cur->right->data.second = val;
-			}
-			else
-			{
-				cur->left->data.second = val;
-			}
+			cur->data.second = val;
 			return false;
 		}
 		else {
@@ -282,8 +345,7 @@ public:
 		return root;
 	}
 	bool Delete(const tkey& key)
-	{
-				
+	{		
 		if (root == nullptr) return false;			// проверка на пустое дерево
 		try {
 			tval t = Find(key);							// проверка на наличие ключа
@@ -292,13 +354,10 @@ public:
 		{
 			return false;
 		}
-		RBNode* pz = find_place(key);
-		RBNode* y = pz;
-		RBNode* z = pz;
-		RBNode* x = pz;
-		if (key > pz->data.first) z = pz->right;		//находим z (особенности find_place)
-		else z = pz->left;
-		
+		RBNode* z = find_place(key);
+		RBNode* y = z;
+		RBNode* x = z;
+
 		if ((z->left == nil) || (z->right == nil)) y = z;	//определяем, оба ли потомка имеет z
 		else y = Tree_Successor(z);
 		
@@ -313,7 +372,7 @@ public:
 			else y->parent->right = x;
 		
 		if (y != z) z->data = y->data;		//
-		//if (y->color) delete_fixup(x);
+		if (y->color) delete_fixup(x);
 		delete y;
 		return true;
 	}
