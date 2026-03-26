@@ -121,9 +121,22 @@ TEST(red_black_tree, can_delete2)
 	a.Insert('C', 4);
 	a.Insert('D', 5);
 	a.Delete('D');
-	EXPECT_EQ(a.get_root()->right->data.first, 'D');
+	EXPECT_EQ(a.get_root()->right->data.first, 'E');
+	EXPECT_EQ(a.get_root()->right->color, 1);
 }
 
+TEST(red_black_tree, can_delete3)
+{
+	RED_BLACK_TREE<double, int> a;
+	a.Insert(5.0, 1);
+	a.Insert(3.0, 2);
+	a.Insert(7.0, 3);
+	a.Insert(6.0, 4);
+	a.Insert(5.5, 5);
+	std::cout << a.nil->left << std::endl;
+	std::cout << a.nil->right << std::endl;
+	a.Insert(6.5, 6);
+}
 
 TEST(red_black_tree, right_turn)
 {
@@ -166,35 +179,30 @@ TEST(red_black_tree, find_place)
 
 
 
-TEST_F(RedBlackTest, can_delete_get_root)
+TEST_F(RedBlackTest, can_delete_root)
 {
 	a.Delete(5.0);
 	EXPECT_EQ(a.get_root()->data.first, 5.5);
-	EXPECT_EQ(a.get_root()->right->data.first, 7.0);
-	EXPECT_EQ(a.get_root()->left->data.first, 3.0);
-	EXPECT_EQ(a.get_root()->right->left->left->data.first, 5.75);
+	EXPECT_EQ(a.get_root()->right->data.first, 6.0);
+	EXPECT_EQ(a.get_root()->left->data.first, 2.0);
+	EXPECT_EQ(a.get_root()->right->left->data.first, 5.75);
 }
 
 TEST_F(RedBlackTest, can_delete2)
 {
 	a.Delete(6.0);
-	EXPECT_EQ(a.get_root()->right->left->data.first, 6.5);
+	EXPECT_EQ(a.get_root()->right->data.first, 6.5);
 }
 
 TEST_F(RedBlackTest, can_delete3)
 {
 	a.Delete(7.0);
-	EXPECT_EQ(a.get_root()->right->data.first, 8.0);
+	EXPECT_EQ(a.get_root()->right->right->data.first, 8.0);
 }
 
 TEST_F(RedBlackTest, can_delete4)
 {
-	a.Delete(6.0);
-	EXPECT_EQ(a.get_root()->right->left->data.first, 6.5);
-}
-
-TEST_F(RedBlackTest, can_delete5)
-{
-	a.Delete(5.0);
-	EXPECT_EQ(a.get_root()->data.first, 5.5);
+	a.Delete(5.5);
+	EXPECT_EQ(a.get_root()->right->left->data.first, 5.75);
+	EXPECT_EQ(a.get_root()->right->left->color, 1);
 }
