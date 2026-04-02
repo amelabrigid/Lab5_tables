@@ -2,7 +2,7 @@
 #include<vector>
 template<typename T> class TSinglyList
 {
-protected:
+public:
 	struct TNode
 	{
 		T value;
@@ -18,11 +18,14 @@ protected:
 			pNext = node.pNext;
 		}
 	};
-	TNode* pCurrent;
+protected:
+
 	TNode* pFirst;
+	TNode* pCurrent = pFirst;
 	TNode* pEnd;
 	size_t sz;
 public:
+
 	TSinglyList()
 	{
 		pFirst = nullptr;
@@ -200,8 +203,105 @@ public:
 		}
 		return tmp->value;
 	}
-
-
+	void swap(TSinglyList& other)
+	{
+		std::swap(pFirst, other.pFirst);
+		std::swap(pEnd, other.pEnd);
+		std::swap(sz, other.sz);
+	}
+	TNode* getFirst()
+	{
+		return pFirst;
+	}
+	TNode* getLast()
+	{
+		return pEnd;
+	}
+	size_t getSize()
+	{
+		return sz;
+	}
+	TNode* Insert(TNode* node, T val)
+	{
+		TNode* current = nullptr;
+		if (node != nullptr)
+		{
+			TNode* next = node->pNext;
+			current = new TNode (val, next);
+			node->pNext = current;
+			sz++;
+			if (node == pEnd)
+			{
+				pEnd = node->pNext;
+			}
+		}
+		else// вставляем в конец списка
+		{
+			current = new TNode(val, nullptr);
+			if (pFirst == nullptr)  // список пуст
+			{
+				pFirst = current;
+				pEnd = current;
+			}
+			else  // список не пуст
+			{
+				pEnd->pNext = current;
+				pEnd = current;
+			}
+			sz++;
+		}
+		return current;
+	}
+	TNode* Delete(TNode* node)
+	{
+		if (node != nullptr)
+		{
+			if (node == pFirst)
+			{
+				pFirst = node->pNext;
+				delete node;
+				sz--;
+				return pFirst;
+			}
+			else if (node == pEnd)
+			{
+				TNode*current = pFirst;
+				TNode* new_last = current;
+				while (current != pEnd)
+				{
+					new_last = current;
+					current = current->pNext;
+				}
+				pEnd = new_last;
+				new_last->pNext = nullptr;
+				delete node;
+				sz--;
+				return new_last;
+			}
+			else
+			{
+				TNode* current = pFirst;
+				TNode* new_last = current;
+				while (current != node && current!=nullptr)
+				{
+					new_last = current;
+					current = current->pNext;
+				}
+				if (current == nullptr)
+				{
+					throw 15;
+				}
+				new_last->pNext = node->pNext;
+				delete node;
+				sz--;
+				return new_last;
+			}
+		}
+		else
+		{
+			throw 15;
+		}
+	}
 	void PushAfter(size_t pos, const T& val)
 	{
 		TNode* tmp = pFirst;
