@@ -7,10 +7,15 @@
 template <typename tkey, typename tval>
 class Hash_Table_chain : public BaseTable<tkey, tval>
 {
+protected:
 	struct chain
 	{
 		size_t hash;
 		std::pair<tkey, tval> data;
+		chain()
+		{
+
+		}
 		chain(tkey k, tval v, int h)
 		{
 			hash = h;
@@ -18,12 +23,15 @@ class Hash_Table_chain : public BaseTable<tkey, tval>
 			data.second = v;
 		}
 	};
-	TSinglyList<chain> list;															//index  =  hash(key) % bucket_count
-	vector <typename TSinglyList<chain>::TNode*> end; // индекс конца карманов						   0     1      2     3 4 5 6 7 8 9
-	vector <typename TSinglyList<chain>::TNode*> begin;									// end		Node2, Node4, Node5	
-	int bucket_count = 10;																// begin	Node1, Node3, Node5
-	Hash_Table_chain()																	// list		Node1 - Node2 - Node3 - Node4 - Node5 ...
-	{																					//	bucket	0        0       1        1      2
+public:
+	TSinglyList<chain> list;	
+protected:																						//index  =  hash(key) % bucket_count
+	std::vector <typename TSinglyList<chain>::TNode*> end; // индекс конца карманов								 0     1      2     3 4 5 6 7 8 9
+	std::vector <typename TSinglyList<chain>::TNode*> begin;									// end		Node2, Node4, Node5	
+	int bucket_count = 8;
+public:																							// begin	Node1, Node3, Node5
+	Hash_Table_chain()																			// list		Node1 - Node2 - Node3 - Node4 - Node5 ...
+	{																							//	bucket	0        0       1        1      2
 		begin.resize(bucket_count, nullptr); // сделал векторы фикс размера
 		end.resize(bucket_count, nullptr);
 	}
@@ -32,6 +40,26 @@ class Hash_Table_chain : public BaseTable<tkey, tval>
 		begin.resize(size, nullptr); // сделал векторы фикс размера
 		end.resize(size, nullptr);
 		bucket_count = size;
+	}
+	//const std::vector<typename TSinglyList<chain>::TNode*>& Get_end()
+	//{
+	//	return end;
+	//}
+	//const std::vector<typename TSinglyList<chain>::TNode*>& Get_begin()
+	//{
+	//	return begin;
+	//}
+	int Get_bucket_count()
+	{
+		return bucket_count;
+	}
+	typename TSinglyList<chain>::TNode*  Get_first_of_bucket(int index)
+	{
+		return begin[index];
+	}
+	typename TSinglyList<chain>::TNode* Get_last_of_bucket(int index)
+	{
+		return end[index];
 	}
 	virtual bool Insert(const tkey& key, const tval& val) override
 	{
@@ -74,7 +102,7 @@ class Hash_Table_chain : public BaseTable<tkey, tval>
 			}
 			else if (current == begin[index])
 			{
-				if (current->pNext!= nullptr && current->pNext->hash % bucket_count == index)
+				if (current->pNext!= nullptr && current->pNext->value.hash % bucket_count == index)
 				{
 					begin[index] = current->pNext;
 					list.Delete(current);
@@ -89,7 +117,7 @@ class Hash_Table_chain : public BaseTable<tkey, tval>
 			else if (current == end[index])
 			{
 				typename TSinglyList<chain>::TNode* new_last = list.Delete(current);
-				if (new_last!=nullptr && new_last->hash % bucket_count == index)
+				if (new_last!=nullptr && new_last->value.hash % bucket_count == index)
 				{
 					end[index] = new_last;
 				}
@@ -143,9 +171,9 @@ class Hash_Table_chain : public BaseTable<tkey, tval>
 			new_table.Insert(current->value.data.first, current->value.data.second);
 			current = current->pNext;
 		}										
-		swap(begin, new_table.begin);
-		swap(end, new_table.end);
-		swap(bucket_count, new_table.bucket_count);// Меняем данные местами, swap без разницы на размеры векторов, после того как поменяли, локальная таблица уничтожится, а новые данные будут в основной
+		std::swap(begin, new_table.begin);
+		std::swap(end, new_table.end);
+		std::swap(bucket_count, new_table.bucket_count);// Меняем данные местами, swap без разницы на размеры векторов, после того как поменяли, локальная таблица уничтожится, а новые данные будут в основной
 		list.swap(new_table.list);
 	}
 	~Hash_Table_chain()
